@@ -24,8 +24,8 @@ class Godunov:
     def get_initial_cell_averages(self):
         cell_averages = np.zeros((1, self.fineness))
         for i in range(self.fineness):
-            lower_x = self.grid[i]
-            upper_x = self.grid[i+1]
+            lower_x = self.grid[i]-self.grid_size/2
+            upper_x = self.grid[i]+self.grid_size/2
             delta_x = upper_x - lower_x
             cell_averages[0,i] = 1/delta_x * integrate.quad(self.rho_0, lower_x, upper_x)[0]
         return cell_averages
@@ -36,7 +36,11 @@ class Godunov:
         next_averages[0] = last_averages[0] + (1/self.grid_size)*(integrate.quad(self.f_1, self.current_time, self.current_time+time_step)[0])-(time_step/self.grid_size)*self.f(self.riemann_solution(last_averages[0], last_averages[1]))
         next_averages[-1] = last_averages[-1] + (time_step/self.grid_size)*(self.f(self.riemann_solution(last_averages[-2], last_averages[-1])))-(1/self.grid_size)*integrate.quad(self.f_2, self.current_time, self.current_time+time_step)[0]
         for ii in range(1,len(last_averages)-1):
+            if last_averages[ii] + (time_step/self.grid_size)*(self.f(self.riemann_solution(last_averages[ii-1], last_averages[ii]))-self.f(self.riemann_solution(last_averages[ii], last_averages[ii+1]))) > 0:
+                pass
             next_averages[ii] = last_averages[ii] + (time_step/self.grid_size)*(self.f(self.riemann_solution(last_averages[ii-1], last_averages[ii]))-self.f(self.riemann_solution(last_averages[ii], last_averages[ii+1])))
+        if (last_averages - next_averages).any():
+            pass
         return next_averages
         
     def numeric_iteration(self):

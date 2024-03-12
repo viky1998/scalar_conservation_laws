@@ -13,7 +13,7 @@ f_1 = lambda rho: f(rho_L)
 f_2 = lambda rho: f(rho_R)
 a = -5
 b = 5
-fineness = 150
+fineness = 200
 
 gg = Godunov(f, f_prime, f_prime_inverse, rho_0, f_1, f_2, a, b, fineness)
 
@@ -25,9 +25,9 @@ for value in eval_values:
 
 
 riemann = Riemann(rho_L=rho_L, rho_R=rho_R)
-x_span = np.arange(start=a, stop=b, step=(b-a)/fineness)
+x_span = np.arange(start=a, stop=b, step=(b-a)/5000)
 
 for time in eval_times:
-    plt.plot(x_span, riemann.pde_solution(x_span, time), "--")
+    plt.plot(x_span, riemann.pde_solution(x_span, time), '--')
  
 plt.show()
